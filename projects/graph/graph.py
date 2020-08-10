@@ -148,28 +148,32 @@ class Graph:
 
         return path
 
-    def dfs_recursive(self, v, destination_vertex, path=[], visited=None, solution=None):
+    def dfs_recursive(self, starting_vertex, destination_vertex):
         """
         Return a list containing a path from
         v to destination_vertex in depth-first order.
 
         This should be done using recursion.
         """
-        if len(path) == 0:
-            solution = []
-            visited = set()
 
-        visited.add(v)
-        path = path + [v]
+        solution = []
+        visited = set()
 
-        if v == destination_vertex:
-            solution.extend(path)
-            return
+        def search(v, path):
+            visited.add(v)
+            path = path + [v]
 
-        for neighbor in self.get_neighbors(v):
-            if neighbor not in visited:
-                self.dfs_recursive(
-                    neighbor, destination_vertex, path, visited, solution)
+            if v == destination_vertex:
+                solution.extend(path)
+                return
+            if len(solution) > 0:
+                return
+
+            for neighbor in self.get_neighbors(v):
+                if neighbor not in visited:
+                    search(neighbor, path)
+
+        search(starting_vertex, [])
 
         return solution
 
