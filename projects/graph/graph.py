@@ -110,11 +110,10 @@ class Graph:
 
         while len(q) > 0:
             path = q.popleft()
-            v = path.pop()
+            v = path[-1]
 
             if v not in visited:
                 visited.add(v)
-                path.append(v)
                 if v == destination_vertex:
                     return path
 
@@ -131,19 +130,16 @@ class Graph:
         s.append([starting_vertex])
 
         visited = set()
-        path = []
 
         while len(s) > 0:
             path = s.pop()
-            v = path.pop()
+            v = path[-1]
+            visited.add(v)
+            if v == destination_vertex:
+                return path
 
-            if v not in visited:
-                visited.add(v)
-                path.append(v)
-                if v == destination_vertex:
-                    return path
-
-                for neighbor in self.get_neighbors(v):
+            for neighbor in self.get_neighbors(v):
+                if neighbor not in visited:
                     s.append(path + [neighbor])
 
         return path
