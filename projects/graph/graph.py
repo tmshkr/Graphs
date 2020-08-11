@@ -160,7 +160,7 @@ class Graph:
         solution = []
         visited = set()
 
-        def search(v, path):
+        def search(v, path=[]):
             visited.add(v)
             path = path + [v]
 
@@ -174,7 +174,7 @@ class Graph:
                 if neighbor not in visited:
                     search(neighbor, path)
 
-        search(starting_vertex, [])
+        search(starting_vertex)
 
         return solution
 
