@@ -112,14 +112,11 @@ class SocialGraph:
         q = deque()
         q.append([user_id])
 
-        visited = set()
-
         while len(q) > 0:
             path = q.popleft()
             v = path[-1]
 
-            if v not in visited:
-                visited.add(v)
+            if v not in paths:
                 paths[v] = path
 
                 for f in self.friendships[v]:
