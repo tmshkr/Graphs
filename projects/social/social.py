@@ -68,7 +68,7 @@ class SocialGraph:
                 if num > total:
                     num = total
                 if l[index] + num > max_num:
-                    break
+                    continue
                 l[index] += num
                 total -= num
 
