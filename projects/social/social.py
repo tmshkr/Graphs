@@ -70,24 +70,26 @@ class SocialGraph:
         num_friendships = gen_avg(avg_friendships, 0, 2 *
                                   avg_friendships, num_users)
 
-        def get_random_id(user_id):
-            choices = [i for i in range(
-                num_users) if i != user_id and num_friendships[i] > 0 and not self.are_friends(user_id, i)]
+        def get_possible_friend_id(user_id):
+            choices = []
+            for i, num in enumerate(num_friendships):
+                if i != user_id and num > 0 and not self.are_friends(user_id, i):
+                    choices.append(i)
+
             if len(choices) == 0:
                 return -1  # no possible friend found
-            else:
-                return random.choice(choices)
+            return random.choice(choices)
 
         for i in range(num_users):
             for _ in range(num_friendships[i]):
-                random_id = get_random_id(i)
-                if random_id == -1:
-                    # if we get stuck in an infinite loop,
+                friend_id = get_possible_friend_id(i)
+                if friend_id == -1:
+                    # if there is no possible friend found,
                     # try again with different num_friendships
                     return self.populate_graph(num_users, avg_friendships)
-                self.add_friendship(i, random_id)
+                self.add_friendship(i, friend_id)
                 num_friendships[i] -= 1
-                num_friendships[random_id] -= 1
+                num_friendships[friend_id] -= 1
 
     def get_all_social_paths(self, user_id):
         """
