@@ -1,6 +1,5 @@
 import random
-from functools import reduce
-from itertools import combinations
+from collections import deque
 
 
 class User:
@@ -108,14 +107,31 @@ class SocialGraph:
 
         The key is the friend's ID and the value is the path.
         """
-        visited = {}  # Note that this is a dictionary, not a set
-        # !!!! IMPLEMENT ME
-        return visited
+        paths = {}
+
+        q = deque()
+        q.append([user_id])
+
+        visited = set()
+
+        while len(q) > 0:
+            path = q.popleft()
+            v = path[-1]
+
+            if v not in visited:
+                visited.add(v)
+                paths[v] = path
+
+                for f in self.friendships[v]:
+                    q.append(path + [f])
+
+        return paths
 
 
 if __name__ == '__main__':
     sg = SocialGraph()
     sg.populate_graph(10, 2)
     print(sg.friendships)
+    print("************")
     connections = sg.get_all_social_paths(1)
     print(connections)
