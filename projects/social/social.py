@@ -1,6 +1,12 @@
+import random
+from functools import reduce
+from itertools import combinations
+
+
 class User:
     def __init__(self, name):
         self.name = name
+
 
 class SocialGraph:
     def __init__(self):
@@ -24,9 +30,12 @@ class SocialGraph:
         """
         Create a new user with a sequential integer ID
         """
-        self.last_id += 1  # automatically increment the ID to assign the new user
         self.users[self.last_id] = User(name)
         self.friendships[self.last_id] = set()
+        self.last_id += 1  # automatically increment the ID to assign the new user
+
+    def are_friends(self, user_a, user_b):
+        return user_a in self.friendships[user_b] and user_b in self.friendships[user_a]
 
     def populate_graph(self, num_users, avg_friendships):
         """
@@ -42,11 +51,43 @@ class SocialGraph:
         self.last_id = 0
         self.users = {}
         self.friendships = {}
-        # !!!! IMPLEMENT ME
 
         # Add users
+        for i in range(num_users):
+            self.add_user(f"user-{i}")
 
         # Create friendships
+
+        # generate a list with the expected average
+        # https://stackoverflow.com/a/39435600
+        def gen_avg(expected_avg, min_num, max_num, n):
+            while True:
+                l = [random.randint(min_num, max_num) for i in range(n)]
+                avg = reduce(lambda x, y: x + y, l) / n
+                if avg == expected_avg:
+                    return l
+
+        def get_random_id(user_id, num_friendships):
+            for _ in range(100):
+                random_id = random.randint(0, num_users - 1)
+                if random_id != user_id and num_friendships[random_id] > 0:
+                    if not self.are_friends(user_id, random_id):
+                        return random_id
+            return -1  # no possible friend found
+
+        num_friendships = gen_avg(avg_friendships, 0, 2 *
+                                  avg_friendships, num_users)
+
+        for i in range(num_users):
+            for _ in range(num_friendships[i]):
+                random_id = get_random_id(i, num_friendships)
+                if random_id == -1:
+                    # if we get stuck in an infinite loop,
+                    # try again with different num_friendships
+                    return self.populate_graph(num_users, avg_friendships)
+                self.add_friendship(i, random_id)
+                num_friendships[i] -= 1
+                num_friendships[random_id] -= 1
 
     def get_all_social_paths(self, user_id):
         """
