@@ -67,20 +67,20 @@ class SocialGraph:
                 if avg == expected_avg:
                     return l
 
-        def get_random_id(user_id, num_friendships):
-            for _ in range(100):
-                random_id = random.randint(0, num_users - 1)
-                if random_id != user_id and num_friendships[random_id] > 0:
-                    if not self.are_friends(user_id, random_id):
-                        return random_id
-            return -1  # no possible friend found
-
         num_friendships = gen_avg(avg_friendships, 0, 2 *
                                   avg_friendships, num_users)
 
+        def get_random_id(user_id):
+            choices = [i for i in range(
+                num_users) if i != user_id and num_friendships[i] > 0 and not self.are_friends(user_id, i)]
+            if len(choices) == 0:
+                return -1  # no possible friend found
+            else:
+                return random.choice(choices)
+
         for i in range(num_users):
             for _ in range(num_friendships[i]):
-                random_id = get_random_id(i, num_friendships)
+                random_id = get_random_id(i)
                 if random_id == -1:
                     # if we get stuck in an infinite loop,
                     # try again with different num_friendships
