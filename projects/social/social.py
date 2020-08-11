@@ -59,16 +59,21 @@ class SocialGraph:
         # Create friendships
 
         # generate a list with the expected average
-        # https://stackoverflow.com/a/39435600
-        def gen_avg(expected_avg, min_num, max_num, n):
-            while True:
-                l = [random.randint(min_num, max_num) for i in range(n)]
-                avg = reduce(lambda x, y: x + y, l) / n
-                if avg == expected_avg:
-                    return l
+        def get_num_friendships(mean, min_num, max_num, n):
+            total = mean * n
+            l = [0] * n
+            while total > 0:
+                num = random.randint(min_num, max_num)
+                index = random.randint(0, n - 1)
+                if num > total:
+                    num = total
+                l[index] += num
+                total -= num
 
-        num_friendships = gen_avg(avg_friendships, 0, 2 *
-                                  avg_friendships, num_users)
+            return l
+
+        num_friendships = get_num_friendships(avg_friendships, 0, 2 *
+                                              avg_friendships, num_users)
 
         def get_possible_friend_id(user_id):
             choices = []
