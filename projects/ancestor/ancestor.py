@@ -25,21 +25,21 @@ def earliest_ancestor(ancestors, starting_node):
     visited = set()
     longest = [1, -1]
 
-    def dft(node, path=[]):
+    def dft(node, length=0):
         if node not in visited:
             visited.add(node)
-            path = path + [node]
+            length += 1
             if len(g.vertices[node]) > 0:
                 for p in g.vertices[node]:
-                    dft(p, path)
+                    dft(p, length)
             # if there are no parent nodes
             # determine the longest path
-            elif len(path) > longest[0]:
-                longest[0] = len(path)
-                longest[1] = path[-1]
-            elif len(path) == longest[0]:
-                if path[-1] < longest[1]:
-                    longest[1] = path[-1]
+            elif length > longest[0]:
+                longest[0] = length
+                longest[1] = node
+            elif length == longest[0]:
+                if node < longest[1]:
+                    longest[1] = node
 
     dft(starting_node)
 
