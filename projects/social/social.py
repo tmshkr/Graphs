@@ -58,15 +58,18 @@ class SocialGraph:
 
         # Create friendships
 
-        # generate a list with the expected average
+        # generate a list representing the number of friendships
+        # per user, with the expected average
         def get_num_friendships(mean, min_num, max_num, n):
-            total = mean * n
-            l = [0] * n
+            total = mean * n - (min_num * n)
+            l = [min_num] * n
             while total > 0:
                 num = random.randint(min_num, max_num)
                 index = random.randint(0, n - 1)
                 if num > total:
                     num = total
+                if l[index] + num > max_num:
+                    break
                 l[index] += num
                 total -= num
 
