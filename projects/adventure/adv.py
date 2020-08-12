@@ -63,9 +63,9 @@ def bfs(room):
 
 def dft(directions):
     for d in directions:
-        # add room travelling from to graph
+        # add to graph room travelling from
         from_room = player.current_room
-        traversal_path.append((d, from_room.id))
+        traversal_path.append(d)
         if from_room.id not in g.rooms:
             g.add_room(from_room)
 
@@ -99,7 +99,7 @@ dft([initial_move])
 # print(g)
 # print(traversal_path)
 
-"""
+
 # TRAVERSAL TEST
 visited_rooms = set()
 player.current_room = world.starting_room
@@ -116,7 +116,7 @@ else:
     print("TESTS FAILED: INCOMPLETE TRAVERSAL")
     print(f"{len(room_graph) - len(visited_rooms)} unvisited rooms")
 
-
+"""
 #######
 # UNCOMMENT TO WALK AROUND
 #######
