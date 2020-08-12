@@ -57,7 +57,7 @@ def bfs(room):
             searched.add(r)
             for (d, to) in g.rooms[r].items():
                 if to == "?":
-                    return path[1:]
+                    return list(map(lambda t: t[0], path[1:]))
                 q.append(path + [(d, to)])
 
 
@@ -84,7 +84,11 @@ def dft(directions):
         print(f"all directions in room {to_room.id} explored")
         path = bfs(player.current_room)
         print(path)
-        # dft(path)
+        if path:
+            dft(path)
+        else:
+            print("len(traversal_path)", len(traversal_path))
+            print("len(g.rooms)", len(g.rooms))
     else:
         next_move = random.choice(choices)
         dft([next_move])
@@ -92,8 +96,8 @@ def dft(directions):
 
 initial_move = random.choice(player.current_room.get_exits())
 dft([initial_move])
-print(g)
-print(traversal_path)
+# print(g)
+# print(traversal_path)
 
 """
 # TRAVERSAL TEST
