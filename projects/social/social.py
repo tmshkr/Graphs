@@ -56,47 +56,14 @@ class SocialGraph:
             self.add_user(f"user-{i}")
 
         # Create friendships
-
-        # generate a list representing the number of friendships
-        # per user, with the expected average
-        def get_num_friendships(mean, min_num, max_num, n):
-            total = mean * n - (min_num * n)
-            l = [min_num] * n
-            while total > 0:
-                num = random.randint(min_num, max_num)
-                index = random.randint(0, n - 1)
-                if num > total:
-                    num = total
-                if l[index] + num > max_num:
-                    continue
-                l[index] += num
-                total -= num
-
-            return l
-
-        num_friendships = get_num_friendships(avg_friendships, 0, 2 *
-                                              avg_friendships, num_users)
-
-        def get_possible_friend_id(user_id):
-            choices = []
-            for i, num in enumerate(num_friendships):
-                if i != user_id and num > 0 and not self.are_friends(user_id, i):
-                    choices.append(i)
-
-            if len(choices) == 0:
-                return -1  # no possible friend found
-            return random.choice(choices)
-
-        for i in range(num_users):
-            for _ in range(num_friendships[i]):
-                friend_id = get_possible_friend_id(i)
-                if friend_id == -1:
-                    # if there is no possible friend found,
-                    # try again with different num_friendships
-                    return self.populate_graph(num_users, avg_friendships)
-                self.add_friendship(i, friend_id)
-                num_friendships[i] -= 1
-                num_friendships[friend_id] -= 1
+        for _ in range((num_users * avg_friendships) // 2):
+            while True:
+                user_id = random.randint(0, self.last_id - 1)
+                friend_id = random.randint(0, self.last_id - 1)
+                if user_id != friend_id:
+                    if not self.are_friends(user_id, friend_id):
+                        self.add_friendship(user_id, friend_id)
+                        break
 
     def get_all_social_paths(self, user_id):
         """
