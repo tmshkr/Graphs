@@ -35,13 +35,6 @@ traversal_path = []
 
 g = Graph()
 
-reverse = {
-    "n": "s",
-    "s": "n",
-    "e": "w",
-    "w": "e"
-}
-
 
 def bfs(room):
     q = deque()
@@ -63,7 +56,7 @@ def bfs(room):
 
 def dft(directions):
     for d in directions:
-        # add to graph room travelling from
+        # add room travelling from
         from_room = player.current_room
         traversal_path.append(d)
         if from_room.id not in g.rooms:
@@ -85,6 +78,7 @@ def dft(directions):
         path = bfs(player.current_room)
         print(path)
         if path:
+            # return
             dft(path)
         else:
             print("len(traversal_path)", len(traversal_path))
@@ -130,7 +124,4 @@ while True:
     else:
         print("I did not understand that command.")
 """
-
-"""
-fin
-"""
+print("\n")
