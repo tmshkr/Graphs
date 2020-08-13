@@ -37,6 +37,8 @@ rooms = {}
 
 
 def bfs(room):
+    # breadth-first search to find the shortest path
+    # to the next unexplored room
     q = deque()
     q.append([("_", room.id)])
 
@@ -73,8 +75,12 @@ def dft(directions):
     else:
         choices = to_room.get_exits()
 
-    if len(choices) == 0:
+    if len(choices) > 0:
+        next_move = random.choice(choices)
+        dft([next_move])
+    else:
         print(f"all directions in room {to_room.id} explored")
+        # get path to next unexplored room
         path = bfs(player.current_room)
         print(path)
         if path:
@@ -83,9 +89,6 @@ def dft(directions):
             print("All rooms explored!")
             print("len(traversal_path)", len(traversal_path))
             print("len(rooms)", len(rooms))
-    else:
-        next_move = random.choice(choices)
-        dft([next_move])
 
 
 initial_move = random.choice(player.current_room.get_exits())
