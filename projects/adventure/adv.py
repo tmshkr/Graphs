@@ -36,9 +36,14 @@ traversal_path = []
 rooms = {}
 
 
+def add_room(room):
+    rooms[room.id] = {d: room.get_room_in_direction(
+        d).id for d in room.get_exits()}
+
+
 def bfs(room):
     # breadth-first search to find the shortest path
-    # to the next unexplored room
+    # to the nearest unvisited room
     q = deque()
     q.append([("_", room.id)])
 
@@ -51,50 +56,39 @@ def bfs(room):
         if r not in searched:
             searched.add(r)
             for (d, to) in rooms[r].items():
-                if to == "?":
-                    return tuple(map(lambda t: t[0], path[1:]))
+                if to not in rooms:
+                    path = path[1:] + [(d, to)]
+                    return tuple(map(lambda t: t[0], path))
                 q.append(path + [(d, to)])
 
 
-def dft(directions):
-    # depth-first traversal to explore
-    # adjacent unexplored rooms
+def traverse(directions):
     for d in directions:
-        # add room travelling from
         from_room = player.current_room
-        if from_room.id not in rooms:
-            rooms[from_room.id] = {d: "?" for d in from_room.get_exits()}
 
         # travel in next direction
         player.travel(d)
         traversal_path.append(d)
         to_room = player.current_room
-        rooms[from_room.id][d] = to_room.id
+        if to_room not in rooms:
+            add_room(to_room)
         print(f"{d} from {from_room.id} to {to_room.id}")
 
-    if to_room.id in rooms:
-        choices = [d for (d, to) in rooms[to_room.id].items() if to == "?"]
+    # get path to next unvisited room
+    path = bfs(player.current_room)
+    print(path)
+    if path:
+        traverse(path)
     else:
-        choices = to_room.get_exits()
-
-    if len(choices) > 0:
-        next_move = random.choice(choices)
-        dft((next_move))
-    else:
-        print(f"all directions in room {to_room.id} explored")
-        # get path to next unexplored room
-        path = bfs(player.current_room)
-        print(path)
-        if path:
-            dft(path)
-        else:
-            print("All rooms explored!")
-            print("len(traversal_path)", len(traversal_path))
-            print("len(rooms)", len(rooms))
+        print("All rooms explored!")
+        print("len(traversal_path)", len(traversal_path))
+        print("len(rooms)", len(rooms))
 
 
-initial_move = random.choice(player.current_room.get_exits())
-dft((initial_move))
+curr = player.current_room
+add_room(curr)
+initial_move = random.choice(curr.get_exits())
+traverse((initial_move))
 # print(g)
 # print(traversal_path)
 
