@@ -33,7 +33,7 @@ player = Player(world.starting_room)
 # traversal_path = ['n', 'n']
 traversal_path = []
 
-g = Graph()
+rooms = {}
 
 
 def bfs(room):
@@ -48,7 +48,7 @@ def bfs(room):
 
         if r not in searched:
             searched.add(r)
-            for (d, to) in g.rooms[r].items():
+            for (d, to) in rooms[r].items():
                 if to == "?":
                     return list(map(lambda t: t[0], path[1:]))
                 q.append(path + [(d, to)])
@@ -59,17 +59,17 @@ def dft(directions):
         # add room travelling from
         from_room = player.current_room
         traversal_path.append(d)
-        if from_room.id not in g.rooms:
-            g.add_room(from_room)
+        if from_room.id not in rooms:
+            rooms[from_room.id] = {d: "?" for d in from_room.get_exits()}
 
         # travel in next direction
         player.travel(d)
         to_room = player.current_room
-        g.rooms[from_room.id][d] = to_room.id
+        rooms[from_room.id][d] = to_room.id
         print(f"{d} from {from_room.id} to {to_room.id}")
 
-    if to_room.id in g.rooms:
-        choices = [d for (d, to) in g.rooms[to_room.id].items() if to == "?"]
+    if to_room.id in rooms:
+        choices = [d for (d, to) in rooms[to_room.id].items() if to == "?"]
     else:
         choices = to_room.get_exits()
 
@@ -78,11 +78,11 @@ def dft(directions):
         path = bfs(player.current_room)
         print(path)
         if path:
-            # return
             dft(path)
         else:
+            print("All rooms explored!")
             print("len(traversal_path)", len(traversal_path))
-            print("len(g.rooms)", len(g.rooms))
+            print("len(rooms)", len(rooms))
     else:
         next_move = random.choice(choices)
         dft([next_move])
