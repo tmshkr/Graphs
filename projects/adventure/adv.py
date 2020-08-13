@@ -8,6 +8,8 @@ from ast import literal_eval
 from graph import Graph
 from collections import deque
 import random
+import sys
+sys.setrecursionlimit(2000)
 
 # Load world
 world = World()
@@ -60,12 +62,12 @@ def dft(directions):
     for d in directions:
         # add room travelling from
         from_room = player.current_room
-        traversal_path.append(d)
         if from_room.id not in rooms:
             rooms[from_room.id] = {d: "?" for d in from_room.get_exits()}
 
         # travel in next direction
         player.travel(d)
+        traversal_path.append(d)
         to_room = player.current_room
         rooms[from_room.id][d] = to_room.id
         print(f"{d} from {from_room.id} to {to_room.id}")
