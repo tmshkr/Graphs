@@ -2,10 +2,8 @@ from room import Room
 from player import Player
 from world import World
 
-import random
 from ast import literal_eval
 
-from graph import Graph
 from collections import deque
 import random
 import sys
@@ -54,11 +52,13 @@ def bfs(room):
             searched.add(r)
             for (d, to) in rooms[r].items():
                 if to == "?":
-                    return list(map(lambda t: t[0], path[1:]))
+                    return tuple(map(lambda t: t[0], path[1:]))
                 q.append(path + [(d, to)])
 
 
 def dft(directions):
+    # depth-first traversal to explore
+    # adjacent unexplored rooms
     for d in directions:
         # add room travelling from
         from_room = player.current_room
@@ -79,7 +79,7 @@ def dft(directions):
 
     if len(choices) > 0:
         next_move = random.choice(choices)
-        dft([next_move])
+        dft((next_move))
     else:
         print(f"all directions in room {to_room.id} explored")
         # get path to next unexplored room
@@ -94,7 +94,7 @@ def dft(directions):
 
 
 initial_move = random.choice(player.current_room.get_exits())
-dft([initial_move])
+dft((initial_move))
 # print(g)
 # print(traversal_path)
 
