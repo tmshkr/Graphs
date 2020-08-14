@@ -85,12 +85,10 @@ def traverse(directions):
         print("len(rooms)", len(rooms))
 
 
-curr = player.current_room
-add_room(curr)
-initial_move = random.choice(curr.get_exits())
+start = player.current_room
+add_room(start)
+initial_move = random.choice(start.get_exits())
 traverse((initial_move))
-# print(g)
-# print(traversal_path)
 
 
 # TRAVERSAL TEST
