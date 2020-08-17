@@ -2,8 +2,12 @@ from room import Room
 from player import Player
 from world import World
 
-import random
 from ast import literal_eval
+
+from collections import deque
+import random
+import sys
+sys.setrecursionlimit(2000)
 
 # Load world
 world = World()
@@ -17,11 +21,11 @@ world = World()
 map_file = "maps/main_maze.txt"
 
 # Loads the map into a dictionary
-room_graph=literal_eval(open(map_file, "r").read())
+room_graph = literal_eval(open(map_file, "r").read())
 world.load_graph(room_graph)
 
 # Print an ASCII map
-world.print_rooms()
+# world.print_rooms()
 
 player = Player(world.starting_room)
 
@@ -29,6 +33,62 @@ player = Player(world.starting_room)
 # traversal_path = ['n', 'n']
 traversal_path = []
 
+rooms = {}
+
+
+def add_room(room):
+    rooms[room.id] = {d: room.get_room_in_direction(
+        d).id for d in room.get_exits()}
+
+
+def bfs(room):
+    # breadth-first search to find the shortest path
+    # to the nearest unvisited room
+    q = deque()
+    q.append([("_", room.id)])
+
+    searched = set()
+
+    while len(q) > 0:
+        path = q.popleft()
+        (_, r) = path[-1]
+
+        if r not in searched:
+            searched.add(r)
+            for (d, to) in rooms[r].items():
+                if to not in rooms:
+                    path = path[1:] + [(d, to)]
+                    return tuple(map(lambda t: t[0], path))
+                q.append(path + [(d, to)])
+
+
+def traverse(directions):
+    for d in directions:
+        from_room = player.current_room
+
+        # travel in next direction
+        player.travel(d)
+        traversal_path.append(d)
+        to_room = player.current_room
+        if to_room not in rooms:
+            add_room(to_room)
+        print(f"{d} from {from_room.id} to {to_room.id}")
+
+    # get path to next unvisited room
+    path = bfs(player.current_room)
+    print(path)
+    if path:
+        traverse(path)
+    else:
+        print("All rooms explored!")
+        print("len(traversal_path)", len(traversal_path))
+        print("len(rooms)", len(rooms))
+
+
+start = player.current_room
+add_room(start)
+initial_move = random.choice(start.get_exits())
+traverse((initial_move))
 
 
 # TRAVERSAL TEST
@@ -41,13 +101,13 @@ for move in traversal_path:
     visited_rooms.add(player.current_room)
 
 if len(visited_rooms) == len(room_graph):
-    print(f"TESTS PASSED: {len(traversal_path)} moves, {len(visited_rooms)} rooms visited")
+    print(
+        f"TESTS PASSED: {len(traversal_path)} moves, {len(visited_rooms)} rooms visited")
 else:
     print("TESTS FAILED: INCOMPLETE TRAVERSAL")
     print(f"{len(room_graph) - len(visited_rooms)} unvisited rooms")
 
-
-
+"""
 #######
 # UNCOMMENT TO WALK AROUND
 #######
@@ -60,3 +120,5 @@ while True:
         break
     else:
         print("I did not understand that command.")
+"""
+print("\n")
